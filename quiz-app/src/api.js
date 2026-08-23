@@ -5,6 +5,14 @@
 
 const BASE_URL = 'http://localhost:8080';
 
+function getAuthHeaders() {
+  const token = localStorage.getItem('jwt');
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 /**
  * POST /quiz/create?title=...&category=...
  *
@@ -13,9 +21,17 @@ const BASE_URL = 'http://localhost:8080';
  */
 export async function createQuiz(title, category) {
   const url = `${BASE_URL}/quiz/create?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category)}`;
-  const res = await fetch(url, { method: 'POST' });
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+  });
 
   const bodyText = await res.text();
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('Session expired. Please sign in again.');
+  }
+
   const id = Number(bodyText);
 
   if (!res.ok || Number.isNaN(id) || id === -1) {
@@ -42,7 +58,14 @@ export async function createQuiz(title, category) {
  *   ]
  */
 export async function getQuiz(id) {
-  const res = await fetch(`${BASE_URL}/quiz/get/${id}`, { method: 'GET' });
+  const res = await fetch(`${BASE_URL}/quiz/get/${id}`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('Session expired. Please sign in again.');
+  }
 
   if (!res.ok) {
     throw new Error(`Failed to fetch quiz (status ${res.status})`);
@@ -59,8 +82,8 @@ function normalizeQuestion(q) {
   // Confirmed backend field is `question`; other names kept as fallbacks just in case.
   const text = q.question ?? q.questionTitle ?? q.questionText ?? q.title ?? '';
   const options = Array.isArray(q.options)
-    ? q.options
-    : [q.option1, q.option2, q.option3, q.option4].filter((o) => o !== undefined && o !== null && o !== '');
+      ? q.options
+      : [q.option1, q.option2, q.option3, q.option4].filter((o) => o !== undefined && o !== null && o !== '');
 
   return { id, text, options, raw: q };
 }
@@ -84,11 +107,15 @@ export async function submitQuiz(id, answers) {
 
   const res = await fetch(`${BASE_URL}/quiz/submit/${id}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(),
     body: JSON.stringify(payload),
   });
 
   const bodyText = await res.text();
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('Session expired. Please sign in again.');
+  }
 
   if (!res.ok) {
     throw new Error(`Failed to submit quiz (status ${res.status}): ${bodyText}`);

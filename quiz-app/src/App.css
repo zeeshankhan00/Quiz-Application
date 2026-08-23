@@ -12,11 +12,74 @@ body {
 .app-container {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 24px;
 }
+/* ---------- Header ---------- */
 
+.app-header {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.app-header button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #f4f6f8;
+  color: #1f2937;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-header button:hover {
+  background: #e5e7eb;
+}
+
+/* ---------- Login ---------- */
+
+.login-container {
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 48px 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  margin: auto;
+}
+
+.login-container h1 {
+  font-size: 2rem;
+  margin-bottom: 32px;
+}
+
+.login-container button {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background: #4338ca;
+}
 /* ---------- Topic Select ---------- */
 
 .topic-select {
