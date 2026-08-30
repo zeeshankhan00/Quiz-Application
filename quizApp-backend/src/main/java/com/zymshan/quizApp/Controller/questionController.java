@@ -53,4 +53,14 @@ public class questionController {
 
          return new ResponseEntity<>("Failed",HttpStatus.BAD_GATEWAY);
      }
+
+     @PostMapping("/addmultiplequestions")
+    public ResponseEntity<String> createMultipleQuestions(@RequestBody List<questions> listQues){
+         try{
+             return qService.createMultipleQuestions(listQues);
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+        return new ResponseEntity<>("Failed",HttpStatus.BAD_GATEWAY);
+    }
 }

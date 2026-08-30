@@ -27,6 +27,12 @@ public class questionService {
 
     public ResponseEntity<String> createQuestion(questions q1) {
          qRepo.save(q1);
-         return new ResponseEntity<>("Success",HttpStatus.CREATED);
+         return new ResponseEntity<>("Successfully created Single Question",HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<String> createMultipleQuestions(List<questions> listQues) {
+
+        qRepo.saveAll(listQues);
+        return new ResponseEntity<>("Successfully created Multiple Questions",HttpStatus.CREATED);
     }
 }
