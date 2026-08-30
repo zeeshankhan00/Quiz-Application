@@ -90,6 +90,14 @@ export default function App() {
     setStage('select');
   }
 
+  function handleGiveUp() {
+    setQuiz(null);
+    setQuestions([]);
+    setResult(null);
+    setError(null);
+    setStage('select');
+  }
+
   function handleLogout() {
     localStorage.removeItem('jwt');
     setUser(null);
@@ -127,7 +135,7 @@ export default function App() {
         )}
 
         {stage === 'quiz' && (
-            <Quiz quiz={quiz} questions={questions} onFinish={handleQuizFinish} />
+            <Quiz quiz={quiz} questions={questions} onFinish={handleQuizFinish} onGiveUp={handleGiveUp} />
         )}
 
         {stage === 'submitting' && <p className="status-text">Submitting your answers...</p>}
