@@ -3,6 +3,7 @@ package com.zymshan.quizApp.Controller;
 import com.zymshan.quizApp.Model.questionWrapper;
 import com.zymshan.quizApp.Model.quiz;
 import com.zymshan.quizApp.Model.quizResponse;
+import com.zymshan.quizApp.Model.quizResultResponse;
 import com.zymshan.quizApp.Service.quizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class quizController {
     }
 
     @PostMapping("submit/{id}")
-    public ResponseEntity<Integer> getQuizScore(@PathVariable String id, @RequestBody List<quizResponse> respones){
+    public ResponseEntity<quizResultResponse> getQuizScore(@PathVariable String id, @RequestBody List<quizResponse> respones){
         return quizService.calculateResponse(id,respones);
     }
 }

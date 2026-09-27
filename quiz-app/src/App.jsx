@@ -73,8 +73,8 @@ export default function App() {
   async function handleQuizFinish(answers) {
     setStage('submitting');
     try {
-      const { score, total } = await submitQuiz(quiz.id, answers);
-      setResult({ score, total });
+      const { score, total, questionResults } = await submitQuiz(quiz.id, answers);
+      setResult({ score, total, questionResults });
       setStage('result');
     } catch (err) {
       setError(err.message || 'Something went wrong submitting the quiz.');
@@ -145,6 +145,7 @@ export default function App() {
                 quiz={quiz}
                 score={result.score}
                 total={result.total}
+                questionResults={result.questionResults}
                 onRestart={handleRestart}
             />
         )}

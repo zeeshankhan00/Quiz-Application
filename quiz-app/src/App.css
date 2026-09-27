@@ -402,3 +402,127 @@ body {
 .modal-deny:hover {
   background: #f2f2f2;
 }
+
+/* ---------- Detailed Results Review ---------- */
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-toggle-button {
+  padding: 12px 24px;
+  border: 2px solid #4f46e5;
+  border-radius: 10px;
+  background: transparent;
+  color: #4f46e5;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.review-toggle-button:hover {
+  background: #eef2ff;
+}
+
+.review-list {
+  margin-top: 28px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-card {
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  padding: 18px 20px;
+  background: #f9fafb;
+}
+
+.review-card-correct {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.review-card-incorrect {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.review-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+.review-question-number {
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.review-status {
+  font-weight: 700;
+}
+
+.status-correct {
+  color: #16a34a;
+}
+
+.status-incorrect {
+  color: #dc2626;
+}
+
+.review-question-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.review-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-option {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-option-right {
+  border-color: #16a34a;
+  background: #dcfce7;
+  font-weight: 600;
+}
+
+.review-option-wrong-pick {
+  border-color: #dc2626;
+  background: #fee2e2;
+  font-weight: 600;
+}
+
+.review-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.8;
+}
+
+.review-skipped-note {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-style: italic;
+}

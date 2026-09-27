@@ -91,18 +91,28 @@ function normalizeQuestion(q) {
 /**
  * POST /quiz/submit/{id}
  *
- * CONFIRMED request body: an array of { id, userResponse }, where `id` is the question id
- * and `userResponse` is the exact text of the option the user picked, e.g.
- *   [
- *     { "id": 1, "userResponse": "extends" },
- *     { "id": 2, "userResponse": "" }   // empty string if the user skipped / ran out of time
- *   ]
+ * CONFIRMED request body: an array of { id, userResponse }, same as before.
  *
- * CONFIRMED response: a raw integer — the count of correct answers (e.g. 2, 9, -9).
- * (Total question count isn't returned, so it's tracked client-side from the questions fetched.)
+ * UPDATED response shape (backend now returns full detail, not just a raw integer):
+ *   {
+ *     "score": 7,
+ *     "questionResults": [
+ *       {
+ *         "id": 1,
+ *         "question": "Which keyword is used to inherit a class in Java?",
+ *         "option1": "implements",
+ *         "option2": "extends",
+ *         "option3": "inherits",
+ *         "option4": "super",
+ *         "userResponse": "extends",
+ *         "rightAnswer": "extends",
+ *         "correct": true
+ *       },
+ *       ...
+ *     ]
+ *   }
  */
 export async function submitQuiz(id, answers) {
-  // `answers` is expected as: [{ questionId, response }]
   const payload = answers.map((a) => ({ id: a.questionId, userResponse: a.response ?? '' }));
 
   const res = await fetch(`${BASE_URL}/quiz/submit/${id}`, {
@@ -111,22 +121,24 @@ export async function submitQuiz(id, answers) {
     body: JSON.stringify(payload),
   });
 
-  const bodyText = await res.text();
-
   if (res.status === 401 || res.status === 403) {
     throw new Error('Session expired. Please sign in again.');
   }
 
   if (!res.ok) {
+    const bodyText = await res.text();
     throw new Error(`Failed to submit quiz (status ${res.status}): ${bodyText}`);
   }
 
-  // Handles a plain integer body whether or not it's JSON-parseable as-is
-  const score = Number(bodyText);
+  const data = await res.json();
 
-  if (Number.isNaN(score)) {
-    throw new Error(`Unexpected /quiz/submit response, could not parse a score: ${bodyText}`);
+  if (typeof data.score !== 'number') {
+    throw new Error('Unexpected /quiz/submit response: missing score');
   }
 
-  return { score, total: answers.length };
+  return {
+    score: data.score,
+    total: answers.length,
+    questionResults: data.questionResults || [],
+  };
 }
