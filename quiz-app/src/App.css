@@ -1,3 +1,63 @@
+:root {
+  --bg: #f4f6f8;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #eef2ff;
+  --accent-soft-border: #a5b4fc;
+  --accent-disabled: #c7d2fe;
+  --danger: #dc2626;
+  --danger-hover: #c9302c;
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --success-border: #bbf7d0;
+  --success-card-bg: #f0fdf4;
+  --danger-bg: #fee2e2;
+  --danger-border: #fecaca;
+  --danger-card-bg: #fef2f2;
+  --shadow: rgba(0, 0, 0, 0.06);
+  --shadow-strong: rgba(0, 0, 0, 0.2);
+  --overlay: rgba(0, 0, 0, 0.5);
+  --neutral-border: #999999;
+  --neutral-text: #666666;
+  --neutral-hover-bg: #f2f2f2;
+  --option-bg: #f9fafb;
+  --review-card-bg: #f9fafb;
+}
+
+[data-theme="dark"] {
+  --bg: #111827;
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --card-bg: #1f2937;
+  --border: #374151;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-soft: #312e81;
+  --accent-soft-border: #4f46e5;
+  --accent-disabled: #3730a5;
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --success: #4ade80;
+  --success-bg: #14532d;
+  --success-border: #166534;
+  --success-card-bg: #0f2a1a;
+  --danger-bg: #450a0a;
+  --danger-border: #7f1d1d;
+  --danger-card-bg: #2a0f0f;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --shadow-strong: rgba(0, 0, 0, 0.6);
+  --overlay: rgba(0, 0, 0, 0.7);
+  --neutral-border: #6b7280;
+  --neutral-text: #9ca3af;
+  --neutral-hover-bg: #374151;
+  --option-bg: #1a2332;
+  --review-card-bg: #1a2332;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,8 +65,9 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background: #f4f6f8;
-  color: #1f2937;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .app-container {
@@ -16,6 +77,32 @@ body {
   align-items: center;
   padding: 24px;
 }
+
+/* ---------- Theme Toggle ---------- */
+
+.theme-toggle-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow);
+  z-index: 10;
+}
+
+.theme-toggle-button:hover {
+  border-color: var(--accent);
+}
+
 /* ---------- Header ---------- */
 
 .app-header {
@@ -26,26 +113,26 @@ body {
   align-items: center;
   padding: 12px 20px;
   margin-bottom: 24px;
-  background: #ffffff;
+  background: var(--card-bg);
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .app-header button {
   padding: 8px 16px;
   border: none;
   border-radius: 8px;
-  background: #f4f6f8;
-  color: #1f2937;
+  background: var(--bg);
+  color: var(--text);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
 }
 
 .app-header button:hover {
-  background: #e5e7eb;
+  background: var(--border);
 }
 
 /* ---------- Login ---------- */
@@ -54,10 +141,10 @@ body {
   max-width: 480px;
   width: 100%;
   text-align: center;
-  background: #ffffff;
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 48px 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px var(--shadow);
   margin: auto;
 }
 
@@ -70,7 +157,7 @@ body {
   padding: 14px 28px;
   border: none;
   border-radius: 10px;
-  background: #4f46e5;
+  background: var(--accent);
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
@@ -78,8 +165,9 @@ body {
 }
 
 .login-container button:hover {
-  background: #4338ca;
+  background: var(--accent-hover);
 }
+
 /* ---------- Topic Select ---------- */
 
 .topic-select {
@@ -94,7 +182,7 @@ body {
 }
 
 .subtitle {
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 32px;
 }
 
@@ -105,20 +193,20 @@ body {
 }
 
 .topic-card {
-  background: #ffffff;
-  border: 2px solid #e5e7eb;
+  background: var(--card-bg);
+  border: 2px solid var(--border);
   border-radius: 12px;
   padding: 28px 16px;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .topic-card:hover:not(:disabled) {
-  border-color: #4f46e5;
-  color: #4f46e5;
+  border-color: var(--accent);
+  color: var(--accent);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
 }
@@ -130,12 +218,12 @@ body {
 
 .status-text {
   margin-top: 24px;
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 1rem;
 }
 
 .error-text {
-  color: #dc2626;
+  color: var(--danger);
   font-weight: 500;
 }
 
@@ -144,10 +232,10 @@ body {
 .quiz {
   max-width: 640px;
   width: 100%;
-  background: #ffffff;
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px var(--shadow);
 }
 
 .quiz-header {
@@ -156,18 +244,18 @@ body {
   align-items: center;
   margin-bottom: 16px;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .quiz-title {
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .timer-bar-track {
   width: 100%;
   height: 6px;
-  background: #e5e7eb;
+  background: var(--border);
   border-radius: 999px;
   overflow: hidden;
   margin-bottom: 4px;
@@ -175,23 +263,23 @@ body {
 
 .timer-bar-fill {
   height: 100%;
-  background: #4f46e5;
+  background: var(--accent);
   transition: width 1s linear;
 }
 
 .timer-bar-fill.timer-low {
-  background: #dc2626;
+  background: var(--danger);
 }
 
 .timer-text {
   text-align: right;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 20px;
 }
 
 .timer-low-text {
-  color: #dc2626;
+  color: var(--danger);
   font-weight: 700;
 }
 
@@ -212,20 +300,21 @@ body {
   text-align: left;
   padding: 14px 18px;
   border-radius: 10px;
-  border: 2px solid #e5e7eb;
-  background: #f9fafb;
+  border: 2px solid var(--border);
+  background: var(--option-bg);
+  color: var(--text);
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .option-button:hover {
-  border-color: #a5b4fc;
+  border-color: var(--accent-soft-border);
 }
 
 .option-selected {
-  border-color: #4f46e5;
-  background: #eef2ff;
+  border-color: var(--accent);
+  background: var(--accent-soft);
   font-weight: 600;
 }
 
@@ -234,7 +323,7 @@ body {
   padding: 14px;
   border: none;
   border-radius: 10px;
-  background: #4f46e5;
+  background: var(--accent);
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
@@ -243,11 +332,11 @@ body {
 }
 
 .next-button:hover:not(:disabled) {
-  background: #4338ca;
+  background: var(--accent-hover);
 }
 
 .next-button:disabled {
-  background: #c7d2fe;
+  background: var(--accent-disabled);
   cursor: not-allowed;
 }
 
@@ -257,10 +346,10 @@ body {
   max-width: 480px;
   width: 100%;
   text-align: center;
-  background: #ffffff;
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 40px 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px var(--shadow);
 }
 
 .result h1 {
@@ -268,7 +357,7 @@ body {
 }
 
 .result-quiz-title {
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 24px;
 }
 
@@ -276,7 +365,7 @@ body {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  border: 6px solid #4f46e5;
+  border: 6px solid var(--accent);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -287,12 +376,12 @@ body {
 .score-number {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .score-divider {
   font-size: 1rem;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .result-percent {
@@ -302,7 +391,7 @@ body {
 }
 
 .result-message {
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 28px;
 }
 
@@ -310,7 +399,7 @@ body {
   padding: 14px 28px;
   border: none;
   border-radius: 10px;
-  background: #4f46e5;
+  background: var(--accent);
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
@@ -318,9 +407,8 @@ body {
 }
 
 .restart-button:hover {
-  background: #4338ca;
+  background: var(--accent-hover);
 }
-
 
 /*------------------ Quiz Give up Styles ------------------*/
 
@@ -332,8 +420,8 @@ body {
 
 .give-up-button {
   background: transparent;
-  border: 1px solid #999;
-  color: #666;
+  border: 1px solid var(--neutral-border);
+  color: var(--neutral-text);
   padding: 10px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -341,14 +429,14 @@ body {
 }
 
 .give-up-button:hover {
-  background: #f2f2f2;
-  border-color: #666;
+  background: var(--neutral-hover-bg);
+  border-color: var(--neutral-text);
 }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -356,18 +444,18 @@ body {
 }
 
 .modal-box {
-  background: #fff;
+  background: var(--card-bg);
   padding: 24px;
   border-radius: 10px;
   max-width: 360px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px var(--shadow-strong);
 }
 
 .modal-text {
   margin-bottom: 20px;
   font-size: 15px;
-  color: #333;
+  color: var(--text);
 }
 
 .modal-actions {
@@ -377,7 +465,7 @@ body {
 }
 
 .modal-confirm {
-  background: #d9534f;
+  background: var(--danger);
   color: white;
   border: none;
   padding: 10px 16px;
@@ -387,20 +475,20 @@ body {
 }
 
 .modal-confirm:hover {
-  background: #c9302c;
+  background: var(--danger-hover);
 }
 
 .modal-deny {
   background: transparent;
-  border: 1px solid #ccc;
-  color: #333;
+  border: 1px solid var(--border);
+  color: var(--text);
   padding: 10px 16px;
   border-radius: 6px;
   cursor: pointer;
 }
 
 .modal-deny:hover {
-  background: #f2f2f2;
+  background: var(--neutral-hover-bg);
 }
 
 /* ---------- Detailed Results Review ---------- */
@@ -413,17 +501,17 @@ body {
 
 .review-toggle-button {
   padding: 12px 24px;
-  border: 2px solid #4f46e5;
+  border: 2px solid var(--accent);
   border-radius: 10px;
   background: transparent;
-  color: #4f46e5;
+  color: var(--accent);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
 }
 
 .review-toggle-button:hover {
-  background: #eef2ff;
+  background: var(--accent-soft);
 }
 
 .review-list {
@@ -436,19 +524,19 @@ body {
 
 .review-card {
   border-radius: 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border);
   padding: 18px 20px;
-  background: #f9fafb;
+  background: var(--review-card-bg);
 }
 
 .review-card-correct {
-  border-color: #bbf7d0;
-  background: #f0fdf4;
+  border-color: var(--success-border);
+  background: var(--success-card-bg);
 }
 
 .review-card-incorrect {
-  border-color: #fecaca;
-  background: #fef2f2;
+  border-color: var(--danger-border);
+  background: var(--danger-card-bg);
 }
 
 .review-card-header {
@@ -461,7 +549,7 @@ body {
 
 .review-question-number {
   font-weight: 700;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .review-status {
@@ -469,11 +557,11 @@ body {
 }
 
 .status-correct {
-  color: #16a34a;
+  color: var(--success);
 }
 
 .status-incorrect {
-  color: #dc2626;
+  color: var(--danger);
 }
 
 .review-question-text {
@@ -481,6 +569,7 @@ body {
   font-weight: 600;
   margin-bottom: 14px;
   line-height: 1.4;
+  color: var(--text);
 }
 
 .review-options {
@@ -492,8 +581,9 @@ body {
 .review-option {
   padding: 10px 14px;
   border-radius: 8px;
-  border: 2px solid #e5e7eb;
-  background: #fff;
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
   font-size: 0.95rem;
   display: flex;
   justify-content: space-between;
@@ -501,14 +591,14 @@ body {
 }
 
 .review-option-right {
-  border-color: #16a34a;
-  background: #dcfce7;
+  border-color: var(--success);
+  background: var(--success-bg);
   font-weight: 600;
 }
 
 .review-option-wrong-pick {
-  border-color: #dc2626;
-  background: #fee2e2;
+  border-color: var(--danger);
+  background: var(--danger-bg);
   font-weight: 600;
 }
 
@@ -523,6 +613,6 @@ body {
 .review-skipped-note {
   margin-top: 10px;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--text-muted);
   font-style: italic;
 }

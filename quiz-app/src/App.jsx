@@ -16,17 +16,25 @@ function getUserFromToken() {
   }
 }
 
-// App states: 'login' | 'select' | 'loading' | 'quiz' | 'submitting' | 'result'
 export default function App() {
   const [stage, setStage] = useState('login');
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
 
-  const [quiz, setQuiz] = useState(null); // { id, title, category }
+  const [quiz, setQuiz] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const [result, setResult] = useState(null); // { score, total }
+  const [result, setResult] = useState(null);
 
-  // If a token already exists (e.g. page refresh), skip straight past login
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  function toggleTheme() {
+    setTheme((t) => (t === 'light' ? 'dark' : 'light'));
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     if (token) {
@@ -36,7 +44,6 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Catch the one-time redirect from Google login before anything else renders
   if (window.location.pathname === '/oauth2/redirect') {
     return (
         <OAuth2Redirect
@@ -106,6 +113,15 @@ export default function App() {
 
   return (
       <div className="app-container">
+        <button
+            className="theme-toggle-button"
+            onClick={toggleTheme}
+            aria-label="Toggle dark mode"
+            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+        >
+          {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+
         {stage !== 'login' && user && (
             <header className="app-header">
               <span>Signed in as {user.name}</span>
