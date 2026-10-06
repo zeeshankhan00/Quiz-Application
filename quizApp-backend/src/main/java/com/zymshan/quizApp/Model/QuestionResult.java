@@ -1,6 +1,6 @@
 package com.zymshan.quizApp.Model;
 
-public class questionResult {
+public class QuestionResult {
 
     private Integer id;
     private String question;
@@ -12,7 +12,7 @@ public class questionResult {
     private String rightAnswer;
     private boolean correct;
 
-    public questionResult(Integer id, String question, String option1, String option2,
+    public QuestionResult(Integer id, String question, String option1, String option2,
                           String option3, String option4, String userResponse,
                           String rightAnswer, boolean correct) {
         this.id = id;

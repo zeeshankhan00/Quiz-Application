@@ -1,16 +1,16 @@
 package com.zymshan.quizApp.Model;
 
-public class quizResponse {
+public class QuizResponse {
 
     private Integer id;
     private String userResponse;
 
-    public quizResponse(Integer id, String userResponse) {
+    public QuizResponse(Integer id, String userResponse) {
         this.id = id;
         this.userResponse = userResponse;
     }
 
-    public quizResponse() {
+    public QuizResponse() {
     }
 
     public Integer getId() {

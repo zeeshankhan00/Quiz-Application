@@ -1,10 +1,9 @@
 package com.zymshan.quizApp.Controller;
 
-import com.zymshan.quizApp.Model.questionWrapper;
-import com.zymshan.quizApp.Model.quiz;
-import com.zymshan.quizApp.Model.quizResponse;
-import com.zymshan.quizApp.Model.quizResultResponse;
-import com.zymshan.quizApp.Service.quizService;
+import com.zymshan.quizApp.Model.QuestionWrapper;
+import com.zymshan.quizApp.Model.QuizResponse;
+import com.zymshan.quizApp.Model.QuizResultResponse;
+import com.zymshan.quizApp.Service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("quiz")
 @CrossOrigin(origins = "http://localhost:3000/")
-public class quizController {
+public class QuizController {
 
     @Autowired
-    quizService quizService;
+    QuizService quizService;
 
     @PostMapping("/create")
     public ResponseEntity<Integer> createQuiz(@RequestParam String title, @RequestParam String category){
@@ -33,12 +32,12 @@ public class quizController {
     }
 
     @GetMapping("get/{id}")
-    public ResponseEntity<List<questionWrapper>> getQuizQuestions(@PathVariable String id){
+    public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(@PathVariable String id){
         return quizService.getQuizQuestions(id);
     }
 
     @PostMapping("submit/{id}")
-    public ResponseEntity<quizResultResponse> getQuizScore(@PathVariable String id, @RequestBody List<quizResponse> respones){
+    public ResponseEntity<QuizResultResponse> getQuizScore(@PathVariable String id, @RequestBody List<QuizResponse> respones){
         return quizService.calculateResponse(id,respones);
     }
 }

@@ -1,7 +1,7 @@
 package com.zymshan.quizApp.Controller;
 
-import com.zymshan.quizApp.Model.questions;
-import com.zymshan.quizApp.Service.questionService;
+import com.zymshan.quizApp.Model.Questions;
+import com.zymshan.quizApp.Service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +13,13 @@ import java.util.List;
 @RestController
 @RequestMapping("question")
 @CrossOrigin(origins = "http://localhost:3000/")
-public class questionController {
+public class QuestionController {
 
     @Autowired
-    questionService qService;
+    QuestionService qService;
 
      @GetMapping("/allquestions")
-    public ResponseEntity<List<questions>> getAllQuestions(){
+    public ResponseEntity<List<Questions>> getAllQuestions(){
 
          try {
              return qService.getAllQuestions();
@@ -30,7 +30,7 @@ public class questionController {
      }
 
      @GetMapping("/difficulty/{level}")
-    public ResponseEntity<List<questions>> getQuestionsByDifficulty(@PathVariable String level){
+    public ResponseEntity<List<Questions>> getQuestionsByDifficulty(@PathVariable String level){
 
          try {
              return qService.getQuestionsByDifficulty(level);
@@ -43,7 +43,7 @@ public class questionController {
      }
 
      @PostMapping("/addquestion")
-    public ResponseEntity<String> createQuestion(@RequestBody questions q1){
+    public ResponseEntity<String> createQuestion(@RequestBody Questions q1){
 
          try {
              return qService.createQuestion(q1);
@@ -55,7 +55,7 @@ public class questionController {
      }
 
      @PostMapping("/addmultiplequestions")
-    public ResponseEntity<String> createMultipleQuestions(@RequestBody List<questions> listQues){
+    public ResponseEntity<String> createMultipleQuestions(@RequestBody List<Questions> listQues){
          try{
              return qService.createMultipleQuestions(listQues);
          } catch (Exception e) {
@@ -63,4 +63,6 @@ public class questionController {
          }
         return new ResponseEntity<>("Failed",HttpStatus.BAD_GATEWAY);
     }
+
+
 }

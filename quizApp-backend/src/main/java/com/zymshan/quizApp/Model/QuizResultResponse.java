@@ -2,12 +2,12 @@ package com.zymshan.quizApp.Model;
 
 import java.util.List;
 
-public class quizResultResponse {
+public class QuizResultResponse {
 
     private Integer score;
-    private List<questionResult> questionResults;
+    private List<QuestionResult> questionResults;
 
-    public quizResultResponse(Integer score, List<questionResult> questionResults) {
+    public QuizResultResponse(Integer score, List<QuestionResult> questionResults) {
         this.score = score;
         this.questionResults = questionResults;
     }
@@ -16,7 +16,7 @@ public class quizResultResponse {
         return score;
     }
 
-    public List<questionResult> getQuestionResults() {
+    public List<QuestionResult> getQuestionResults() {
         return questionResults;
     }
 }

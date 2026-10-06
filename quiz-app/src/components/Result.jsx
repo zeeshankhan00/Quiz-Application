@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 export default function Result({ quiz, score, total, questionResults, onRestart }) {
     const [showReview, setShowReview] = useState(false);
-
     const percent = total > 0 ? Math.round((score / total) * 100) : 0;
 
     let message = 'Keep practicing!';

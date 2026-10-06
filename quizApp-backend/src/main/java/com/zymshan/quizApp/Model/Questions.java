@@ -3,7 +3,7 @@ package com.zymshan.quizApp.Model;
 import jakarta.persistence.*;
 
 @Entity
-public class questions {
+public class Questions {
 
 
     @Id
@@ -19,9 +19,9 @@ public class questions {
     private String option4;
     private String rightAnswer;
 
-    public questions(){}
+    public Questions(){}
 
-    public questions(Integer id, String category, String difficulty,
+    public Questions(Integer id, String category, String difficulty,
                      String question, String option1, String option2,
                      String option3, String option4, String rightAnswer) {
         this.id = id;

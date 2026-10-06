@@ -1,11 +1,6 @@
 package com.zymshan.quizApp.Model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-public class questionWrapper {
+public class QuestionWrapper {
 
     private Integer id;
     private String question;
@@ -14,10 +9,10 @@ public class questionWrapper {
     private String option3;
     private String option4;
 
-    public questionWrapper() {
+    public QuestionWrapper() {
     }
 
-    public questionWrapper(Integer id, String question, String option1, String option2, String option3, String option4) {
+    public QuestionWrapper(Integer id, String question, String option1, String option2, String option3, String option4) {
         this.id = id;
         this.question = question;
         this.option1 = option1;

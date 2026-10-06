@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-public class quiz {
+public class Quiz {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,13 +13,13 @@ public class quiz {
     private String title;
 
     @ManyToMany
-    private List<questions> questionsList;
+    private List<Questions> questionsList;
 
-    public quiz(){
+    public Quiz(){
 
     }
 
-    public quiz(Integer id, String title, List<questions> questionsList) {
+    public Quiz(Integer id, String title, List<Questions> questionsList) {
         this.id = id;
         this.title = title;
         this.questionsList = questionsList;
@@ -41,11 +41,11 @@ public class quiz {
         this.title = title;
     }
 
-    public List<questions> getQuestionsList() {
+    public List<Questions> getQuestionsList() {
         return questionsList;
     }
 
-    public void setQuestionsList(List<questions> questionsList) {
+    public void setQuestionsList(List<Questions> questionsList) {
         this.questionsList = questionsList;
     }
 }
