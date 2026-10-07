@@ -46,5 +46,15 @@ public class AdminQuestionController {
         return service.deleteQuestion(id);
     }
 
+    @PostMapping("/addmultiplequestions")
+    public ResponseEntity<String> createMultipleQuestions(@RequestBody List<Questions> listQues){
+        try{
+            return service.createMultipleQuestions(listQues);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Failed",HttpStatus.BAD_GATEWAY);
+    }
+
 
 }

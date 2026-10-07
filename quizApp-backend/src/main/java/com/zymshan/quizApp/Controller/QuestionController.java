@@ -18,7 +18,7 @@ public class QuestionController {
     @Autowired
     QuestionService qService;
 
-     @GetMapping("/allquestions")
+     /*@GetMapping("/allquestions")
     public ResponseEntity<List<Questions>> getAllQuestions(){
 
          try {
@@ -62,7 +62,7 @@ public class QuestionController {
              e.printStackTrace();
          }
         return new ResponseEntity<>("Failed",HttpStatus.BAD_GATEWAY);
-    }
+    }*/
 
 
 }
