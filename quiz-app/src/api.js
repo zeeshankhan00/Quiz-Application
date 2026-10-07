@@ -1,144 +1,80 @@
-// =====================================================================================
-// ALL assumptions about your Spring Boot backend's request/response shapes live here.
-// If your backend returns different field names, this is the ONLY file you need to edit.
-// =====================================================================================
+export const API_BASE_URL = (import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8080').replace(/\/+$/, '');
+export const ADMIN_MUTATIONS_ENABLED = import.meta.env?.VITE_ADMIN_MUTATIONS_ENABLED === 'true';
 
-const BASE_URL = 'http://localhost:8080';
-
-function getAuthHeaders() {
-  const token = localStorage.getItem('jwt');
-  return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  };
+export class ApiError extends Error {
+  constructor(message, status) { super(message); this.name = 'ApiError'; this.status = status; }
 }
 
-/**
- * POST /quiz/create?title=...&category=...
- *
- * CONFIRMED response: a raw integer — the new quiz's id (e.g. 5, 6, 7),
- * or -1 if creation failed.
- */
+export async function apiRequest(path, { method = 'GET', body, signal } = {}) {
+  const token = localStorage.getItem('jwt');
+  const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}) };
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method, headers, signal, ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    });
+  } catch (error) {
+    if (error.name === 'AbortError') throw error;
+    throw new ApiError('Cannot reach the server. Please try again.', 0);
+  }
+  const text = await response.text();
+  let data = null;
+  if (text) { try { data = JSON.parse(text); } catch { data = text; } }
+  if (response.status === 401) {
+    localStorage.removeItem('jwt');
+    throw new ApiError('Session expired. Please sign in again.', 401);
+  }
+  if (response.status === 403) throw new ApiError('Your account does not have admin access.', 403);
+  if (!response.ok) throw new ApiError(
+    (typeof data?.message === 'string' && data.message)
+      || (typeof data?.detail === 'string' && data.detail)
+      || `Request failed (status ${response.status}).`, response.status);
+  return data;
+}
+
+export function getCurrentUser(options) { return apiRequest('/auth/me', options); }
+
 export async function createQuiz(title, category) {
-  const url = `${BASE_URL}/quiz/create?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category)}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-  });
-
-  const bodyText = await res.text();
-
-  if (res.status === 401 || res.status === 403) {
-    throw new Error('Session expired. Please sign in again.');
-  }
-
-  const id = Number(bodyText);
-
-  if (!res.ok || Number.isNaN(id) || id === -1) {
-    throw new Error(`Failed to create quiz: ${bodyText}`);
-  }
-
+  const data = await apiRequest(`/quiz/create?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category)}`,
+    { method: 'POST' });
+  const id = Number(data);
+  if (!Number.isInteger(id) || id <= 0) throw new ApiError('Unexpected quiz ID from server.', 0);
   return { id };
 }
 
-/**
- * GET /quiz/get/{id}
- *
- * CONFIRMED response shape: an array of question objects, e.g.
- *   [
- *     {
- *       "id": 1,
- *       "question": "Which keyword is used to inherit a class in Java?",
- *       "option1": "implements",
- *       "option2": "extends",
- *       "option3": "inherits",
- *       "option4": "super"
- *     },
- *     ...
- *   ]
- */
 export async function getQuiz(id) {
-  const res = await fetch(`${BASE_URL}/quiz/get/${id}`, {
-    method: 'GET',
-    headers: getAuthHeaders(),
-  });
-
-  if (res.status === 401 || res.status === 403) {
-    throw new Error('Session expired. Please sign in again.');
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch quiz (status ${res.status})`);
-  }
-
-  const data = await res.json();
-  const rawQuestions = Array.isArray(data) ? data : (data.questions || data.questionList || []);
-
-  return rawQuestions.map(normalizeQuestion);
+  const data = await apiRequest(`/quiz/get/${id}`);
+  const rawQuestions = Array.isArray(data) ? data : (data?.questions || data?.questionList || []);
+  return rawQuestions.map(q => ({
+    id: q.id ?? q.questionId,
+    text: q.question ?? q.questionTitle ?? q.questionText ?? q.title ?? '',
+    options: Array.isArray(q.options) ? q.options
+      : [q.option1, q.option2, q.option3, q.option4].filter(o => o !== undefined && o !== null && o !== ''),
+    raw: q,
+  }));
 }
 
-function normalizeQuestion(q) {
-  const id = q.id ?? q.questionId;
-  // Confirmed backend field is `question`; other names kept as fallbacks just in case.
-  const text = q.question ?? q.questionTitle ?? q.questionText ?? q.title ?? '';
-  const options = Array.isArray(q.options)
-      ? q.options
-      : [q.option1, q.option2, q.option3, q.option4].filter((o) => o !== undefined && o !== null && o !== '');
-
-  return { id, text, options, raw: q };
-}
-
-/**
- * POST /quiz/submit/{id}
- *
- * CONFIRMED request body: an array of { id, userResponse }, same as before.
- *
- * UPDATED response shape (backend now returns full detail, not just a raw integer):
- *   {
- *     "score": 7,
- *     "questionResults": [
- *       {
- *         "id": 1,
- *         "question": "Which keyword is used to inherit a class in Java?",
- *         "option1": "implements",
- *         "option2": "extends",
- *         "option3": "inherits",
- *         "option4": "super",
- *         "userResponse": "extends",
- *         "rightAnswer": "extends",
- *         "correct": true
- *       },
- *       ...
- *     ]
- *   }
- */
 export async function submitQuiz(id, answers) {
-  const payload = answers.map((a) => ({ id: a.questionId, userResponse: a.response ?? '' }));
-
-  const res = await fetch(`${BASE_URL}/quiz/submit/${id}`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(payload),
+  const data = await apiRequest(`/quiz/submit/${id}`, {
+    method: 'POST', body: answers.map(a => ({ id: a.questionId, userResponse: a.response ?? '' })),
   });
+  if (typeof data?.score !== 'number') throw new ApiError('Unexpected quiz result from server.', 0);
+  return { score: data.score, total: answers.length, questionResults: data.questionResults || [] };
+}
 
-  if (res.status === 401 || res.status === 403) {
-    throw new Error('Session expired. Please sign in again.');
-  }
-
-  if (!res.ok) {
-    const bodyText = await res.text();
-    throw new Error(`Failed to submit quiz (status ${res.status}): ${bodyText}`);
-  }
-
-  const data = await res.json();
-
-  if (typeof data.score !== 'number') {
-    throw new Error('Unexpected /quiz/submit response: missing score');
-  }
-
-  return {
-    score: data.score,
-    total: answers.length,
-    questionResults: data.questionResults || [],
-  };
+export async function getAdminQuestions(category, options) {
+  const data = await apiRequest(`/admin/questions?category=${encodeURIComponent(category)}`, options);
+  if (!Array.isArray(data)) throw new ApiError('Unexpected question list from server.', 0);
+  return data;
+}
+export function createAdminQuestion(question) {
+  return apiRequest('/admin/questions', { method: 'POST', body: question });
+}
+// The update/delete handlers are yours to implement; enable the feature flag when ready.
+export function updateAdminQuestion(id, question) {
+  return apiRequest(`/admin/questions/${id}`, { method: 'PUT', body: question });
+}
+export function deleteAdminQuestion(id) {
+  return apiRequest(`/admin/questions/${id}`, { method: 'DELETE' });
 }
