@@ -70,14 +70,15 @@ test('empty 204 response is accepted and server validation message is preserved'
   globalThis.fetch = async () => response(400, { message: 'Correct answer must match an option exactly.' });
   await assert.rejects(apiRequest('/admin/questions'), /Correct answer must match/);
 });
-test('existing quiz API contract remains compatible', async () => {
+test('quiz adapter sends the existing submission payload and retains server scoring totals', async () => {
   setup(); globalThis.fetch = async () => response(201, 9);
   assert.deepEqual(await createQuiz('JavaQuiz', 'Java'), { id: 9 });
   globalThis.fetch = async () => response(200, [{ id: 1, question: 'Q', option1: 'A', option2: 'B' }]);
   assert.deepEqual((await getQuiz(9))[0].options, ['A', 'B']);
   globalThis.fetch = async (_url, options) => {
     assert.deepEqual(JSON.parse(options.body), [{ id: 1, userResponse: 'A' }]);
-    return response(200, { score: 1, questionResults: [] });
+    return response(200, { score: 1, maxScore: 6, percentage: 16.67, accuracy: 33.33,
+      totalQuestions: 3, correctCount: 1, incorrectCount: 0, unansweredCount: 2, questionResults: [] });
   };
   assert.equal((await submitQuiz(9, [{ questionId: 1, response: 'A' }])).score, 1);
 });

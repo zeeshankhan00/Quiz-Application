@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import DifficultyBadge from './DifficultyBadge.jsx';
 
-export default function Result({ quiz, score, total, questionResults, onRestart }) {
+export default function Result({ quiz, result, onRestart }) {
     const [showReview, setShowReview] = useState(false);
-    const percent = total > 0 ? Math.round((score / total) * 100) : 0;
+    const { score, maxScore, percentage, accuracy, totalQuestions, correctCount,
+        incorrectCount, unansweredCount, questionResults } = result;
 
     let message = 'Keep practicing!';
-    if (percent >= 80) message = 'Excellent work!';
-    else if (percent >= 50) message = 'Good effort!';
+    if (percentage >= 80) message = 'Excellent work!';
+    else if (percentage >= 50) message = 'Good effort!';
 
     const hasReviewData = Array.isArray(questionResults) && questionResults.length > 0;
 
@@ -17,10 +19,16 @@ export default function Result({ quiz, score, total, questionResults, onRestart 
 
             <div className="score-circle">
                 <span className="score-number">{score}</span>
-                <span className="score-divider">/ {total}</span>
+                <span className="score-divider">/ {maxScore} points</span>
             </div>
 
-            <p className="result-percent">{percent}% correct</p>
+            <p className="result-percent">{percentage}% weighted score</p>
+            <p className="result-accuracy">{correctCount} of {totalQuestions} correct · {accuracy}% accuracy</p>
+            <dl className="result-breakdown" aria-label="Answer breakdown">
+                <div><dt>Correct</dt><dd>{correctCount}</dd></div>
+                <div><dt>Incorrect</dt><dd>{incorrectCount}</dd></div>
+                <div><dt>Skipped</dt><dd>{unansweredCount}</dd></div>
+            </dl>
             <p className="result-message">{message}</p>
 
             <div className="result-actions">
@@ -48,22 +56,29 @@ export default function Result({ quiz, score, total, questionResults, onRestart 
 
 function QuestionReviewCard({ q, index }) {
     const options = [q.option1, q.option2, q.option3, q.option4].filter(Boolean);
+    const status = q.correct ? 'correct' : q.answered ? 'incorrect' : 'skipped';
+    const statusLabel = q.correct ? '✓ Correct' : q.answered ? '✗ Incorrect' : 'Skipped';
+    const sameAnswer = (a, b) => typeof a === 'string' && typeof b === 'string'
+        && a.trim() === b.trim();
 
     return (
-        <div className={`review-card ${q.correct ? 'review-card-correct' : 'review-card-incorrect'}`}>
+        <div className={`review-card review-card-${status}`}>
             <div className="review-card-header">
                 <span className="review-question-number">Q{index + 1}</span>
-                <span className={`review-status ${q.correct ? 'status-correct' : 'status-incorrect'}`}>
-          {q.correct ? '✓ Correct' : '✗ Incorrect'}
-        </span>
+                <span className={`review-status status-${status}`}>{statusLabel}</span>
+            </div>
+
+            <div className="review-question-meta">
+                <DifficultyBadge difficulty={q.difficulty} />
+                <span className="review-points">{q.pointsAwarded} / {q.maxPoints} points</span>
             </div>
 
             <p className="review-question-text">{q.question}</p>
 
             <div className="review-options">
                 {options.map((opt) => {
-                    const isRight = opt === q.rightAnswer;
-                    const isUserPick = opt === q.userResponse;
+                    const isRight = sameAnswer(opt, q.rightAnswer);
+                    const isUserPick = sameAnswer(opt, q.userResponse);
 
                     let optionClass = 'review-option';
                     if (isRight) optionClass += ' review-option-right';
@@ -79,7 +94,7 @@ function QuestionReviewCard({ q, index }) {
                 })}
             </div>
 
-            {!q.userResponse && <p className="review-skipped-note">You didn't answer this question.</p>}
+            {!q.answered && <p className="review-skipped-note">You didn't answer this question. No points were deducted.</p>}
         </div>
     );
 }

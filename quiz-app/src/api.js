@@ -49,6 +49,8 @@ export async function getQuiz(id) {
   return rawQuestions.map(q => ({
     id: q.id ?? q.questionId,
     text: q.question ?? q.questionTitle ?? q.questionText ?? q.title ?? '',
+    difficulty: q.difficulty,
+    points: q.points,
     options: Array.isArray(q.options) ? q.options
       : [q.option1, q.option2, q.option3, q.option4].filter(o => o !== undefined && o !== null && o !== ''),
     raw: q,
@@ -59,8 +61,15 @@ export async function submitQuiz(id, answers) {
   const data = await apiRequest(`/quiz/submit/${id}`, {
     method: 'POST', body: answers.map(a => ({ id: a.questionId, userResponse: a.response ?? '' })),
   });
-  if (typeof data?.score !== 'number') throw new ApiError('Unexpected quiz result from server.', 0);
-  return { score: data.score, total: answers.length, questionResults: data.questionResults || [] };
+  const numericFields = ['score', 'maxScore', 'percentage', 'accuracy', 'totalQuestions',
+    'correctCount', 'incorrectCount', 'unansweredCount'];
+  if (!numericFields.every(field => Number.isFinite(data?.[field]) && data[field] >= 0)
+      || data.score > data.maxScore || data.percentage > 100 || data.accuracy > 100
+      || data.correctCount + data.incorrectCount + data.unansweredCount !== data.totalQuestions
+      || !Array.isArray(data.questionResults)) {
+    throw new ApiError('Unexpected quiz result from server. Please try again.', 0);
+  }
+  return data;
 }
 
 export async function getAdminQuestions(category, options) {

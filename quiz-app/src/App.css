@@ -12,12 +12,16 @@
   --danger: #dc2626;
   --danger-hover: #c9302c;
   --success: #16a34a;
+  --difficulty-easy-text: #166534;
   --success-bg: #dcfce7;
   --success-border: #bbf7d0;
   --success-card-bg: #f0fdf4;
   --danger-bg: #fee2e2;
   --danger-border: #fecaca;
   --danger-card-bg: #fef2f2;
+  --warning: #92400e;
+  --warning-bg: #fef3c7;
+  --warning-border: #fde68a;
   --shadow: rgba(0, 0, 0, 0.06);
   --shadow-strong: rgba(0, 0, 0, 0.2);
   --overlay: rgba(0, 0, 0, 0.5);
@@ -42,12 +46,16 @@
   --danger: #f87171;
   --danger-hover: #ef4444;
   --success: #4ade80;
+  --difficulty-easy-text: #86efac;
   --success-bg: #14532d;
   --success-border: #166534;
   --success-card-bg: #0f2a1a;
   --danger-bg: #450a0a;
   --danger-border: #7f1d1d;
   --danger-card-bg: #2a0f0f;
+  --warning: #fbbf24;
+  --warning-bg: #451a03;
+  --warning-border: #92400e;
   --shadow: rgba(0, 0, 0, 0.4);
   --shadow-strong: rgba(0, 0, 0, 0.6);
   --overlay: rgba(0, 0, 0, 0.7);
@@ -241,7 +249,8 @@ body {
 .quiz-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 16px;
   margin-bottom: 16px;
   font-size: 0.9rem;
   color: var(--text-muted);
@@ -250,7 +259,19 @@ body {
 .quiz-title {
   font-weight: 700;
   color: var(--text);
+  overflow-wrap: anywhere;
+  line-height: 1.5;
 }
+
+.quiz-header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.quiz-progress { white-space: nowrap; }
 
 .timer-bar-track {
   width: 100%;
@@ -287,6 +308,8 @@ body {
   font-size: 1.3rem;
   margin-bottom: 24px;
   line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .options-list {
@@ -394,6 +417,21 @@ body {
   color: var(--text-muted);
   margin-bottom: 28px;
 }
+
+.result-accuracy { color: var(--text-muted); line-height: 1.5; }
+.result-breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 24px 0;
+}
+.result-breakdown div {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 4px;
+}
+.result-breakdown dt { font-size: 0.8rem; color: var(--text-muted); }
+.result-breakdown dd { margin: 6px 0 0; font-size: 1.3rem; font-weight: 700; }
 
 .restart-button {
   padding: 14px 28px;
@@ -564,12 +602,18 @@ body {
   color: var(--danger);
 }
 
+.status-skipped { color: var(--text-muted); }
+.review-question-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.review-points { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }
+
 .review-question-text {
   font-size: 1.05rem;
   font-weight: 600;
   margin-bottom: 14px;
   line-height: 1.4;
   color: var(--text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .review-options {
@@ -588,6 +632,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow-wrap: anywhere;
 }
 
 .review-option-right {
@@ -651,11 +698,27 @@ body {
 .admin-question ol { padding-left: 22px; }
 .admin-question li { margin: 8px 0; line-height: 1.5; overflow-wrap: anywhere; }
 .admin-question-meta { color: var(--text-muted); font-size: 0.8rem; }
-.difficulty-badge { border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; }
+.difficulty-badge {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.difficulty-badge--easy { color: var(--difficulty-easy-text); background: var(--success-bg); border-color: var(--success-border); }
+.difficulty-badge--medium { color: var(--warning); background: var(--warning-bg); border-color: var(--warning-border); }
+.difficulty-badge--hard { color: var(--danger); background: var(--danger-bg); border-color: var(--danger-border); }
 .correct-answer, .success-text { color: var(--success); font-weight: 600; }
 .admin-alert { padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; }
 @media (max-width: 800px) {
   .admin-grid { grid-template-columns: 1fr; }
   .admin-heading { align-items: stretch; flex-direction: column; }
   .app-header { flex-wrap: wrap; gap: 12px; padding-right: 56px; }
+}
+
+@media (max-width: 480px) {
+  .quiz, .result { padding: 24px 20px; }
+  .quiz-actions { flex-direction: column; }
 }

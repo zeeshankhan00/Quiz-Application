@@ -11,10 +11,15 @@ public class QuestionResult {
     private String userResponse;
     private String rightAnswer;
     private boolean correct;
+    private String difficulty;
+    private int maxPoints;
+    private int pointsAwarded;
+    private boolean answered;
 
     public QuestionResult(Integer id, String question, String option1, String option2,
                           String option3, String option4, String userResponse,
-                          String rightAnswer, boolean correct) {
+                          String rightAnswer, boolean correct, String difficulty,
+                          int maxPoints, int pointsAwarded, boolean answered) {
         this.id = id;
         this.question = question;
         this.option1 = option1;
@@ -24,7 +29,16 @@ public class QuestionResult {
         this.userResponse = userResponse;
         this.rightAnswer = rightAnswer;
         this.correct = correct;
+        this.difficulty = difficulty;
+        this.maxPoints = maxPoints;
+        this.pointsAwarded = pointsAwarded;
+        this.answered = answered;
     }
+
+    public String getDifficulty() { return difficulty; }
+    public int getMaxPoints() { return maxPoints; }
+    public int getPointsAwarded() { return pointsAwarded; }
+    public boolean isAnswered() { return answered; }
 
     public Integer getId() {
         return id;

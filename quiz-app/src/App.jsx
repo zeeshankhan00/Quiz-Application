@@ -117,7 +117,6 @@ export default function App({ initialError = null }) {
     {(stage === 'select' || stage === 'loading') && <TopicSelect onSelect={handleTopicSelect} loading={stage === 'loading'} error={error} />}
     {stage === 'quiz' && <Quiz quiz={quiz} questions={questions} onFinish={handleQuizFinish} onGiveUp={resetQuiz} />}
     {stage === 'submitting' && <p className="status-text">Submitting your answers…</p>}
-    {stage === 'result' && <Result quiz={quiz} score={result.score} total={result.total}
-      questionResults={result.questionResults} onRestart={resetQuiz} />}
+    {stage === 'result' && <Result quiz={quiz} result={result} onRestart={resetQuiz} />}
   </div>;
 }

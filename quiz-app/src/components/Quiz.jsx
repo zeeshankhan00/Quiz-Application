@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import DifficultyBadge from './DifficultyBadge.jsx';
 
 const SECONDS_PER_QUESTION = 30;
 
@@ -8,19 +9,14 @@ export default function Quiz({ quiz, questions, onFinish, onGiveUp }) {
   const [answers, setAnswers] = useState([]); // [{ questionId, response }]
   const [timeLeft, setTimeLeft] = useState(SECONDS_PER_QUESTION);
   const [showGiveUpModal, setShowGiveUpModal] = useState(false);
+  const advancedQuestionId = useRef(null);
 
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex === questions.length - 1;
 
-  // Reset timer + selection whenever we move to a new question
-  useEffect(() => {
-    setSelected(null);
-    setTimeLeft(SECONDS_PER_QUESTION);
-  }, [currentIndex]);
-
   // Countdown
   useEffect(() => {
-    if (showGiveUpModal) return; // pause timer while modal is open
+    if (showGiveUpModal || !currentQuestion) return; // pause timer while modal is open
     if (timeLeft <= 0) {
       goToNext(selected);
       return;
@@ -28,9 +24,12 @@ export default function Quiz({ quiz, questions, onFinish, onGiveUp }) {
     const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeLeft, showGiveUpModal]);
+  }, [currentIndex, timeLeft, showGiveUpModal]);
 
   function goToNext(chosenOption) {
+    // A click and the timeout must not advance the same question twice.
+    if (!currentQuestion || advancedQuestionId.current === currentQuestion.id) return;
+    advancedQuestionId.current = currentQuestion.id;
     const updatedAnswers = [
       ...answers,
       { questionId: currentQuestion.id, response: chosenOption ?? '' },
@@ -40,6 +39,8 @@ export default function Quiz({ quiz, questions, onFinish, onGiveUp }) {
       onFinish(updatedAnswers);
     } else {
       setAnswers(updatedAnswers);
+      setSelected(null);
+      setTimeLeft(SECONDS_PER_QUESTION);
       setCurrentIndex((i) => i + 1);
     }
   }
@@ -54,7 +55,6 @@ export default function Quiz({ quiz, questions, onFinish, onGiveUp }) {
 
   function handleGiveUpConfirm() {
     setShowGiveUpModal(false);
-    console.log('Give up clicked, calling onGiveUp:', onGiveUp);
     onGiveUp();
   }
 
@@ -73,9 +73,10 @@ export default function Quiz({ quiz, questions, onFinish, onGiveUp }) {
       <div className="quiz">
         <div className="quiz-header">
           <span className="quiz-title">{quiz.title}</span>
-          <span className="quiz-progress">
-          Question {currentIndex + 1} of {questions.length}
-        </span>
+          <div className="quiz-header-meta" aria-live="polite">
+            <DifficultyBadge difficulty={currentQuestion.difficulty} points={currentQuestion.points} />
+            <span className="quiz-progress">Question {currentIndex + 1} of {questions.length}</span>
+          </div>
         </div>
 
         <div className="timer-bar-track">
