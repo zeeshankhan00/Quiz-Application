@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class QuestionValidator {
     private static final List<String> CATEGORIES = List.of("Java", "Advance Java", "Spring Boot",
-            "Spring Security", "Spring JDBC", "SQL", "AWS", "Docker");
+            "Spring Security", "Spring JDBC", "SQL", "AWS", "Docker","Spring AI","Microservices","Kafka","Kubernetes");
     private static final List<String> DIFFICULTIES = List.of("Easy", "Medium", "Hard");
 
     public void validateAndNormalize(Questions q){
