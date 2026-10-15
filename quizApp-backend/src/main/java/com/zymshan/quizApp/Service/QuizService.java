@@ -17,6 +17,7 @@ public class QuizService {
 
     private final QuizRepo quizRepo;
     private final QuestionRepo questionRepo;
+    private final Integer QUESTION_PER_QUIZ = 15;
 
     public QuizService(QuizRepo quizRepo, QuestionRepo questionRepo) {
         this.quizRepo = quizRepo;
@@ -28,10 +29,20 @@ public class QuizService {
         try {
             List<Questions> questions = questionRepo.findByCategory(category);
 
+            if(questions.size()<QUESTION_PER_QUIZ){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "This topic needs at least " + QUESTION_PER_QUIZ
+                                + " questions to start a quiz. Available: " + questions.size() + ".");
+            }
+
+            Collections.shuffle(questions);
+
+            List<Questions> selectedQuestions = new ArrayList<>(questions.subList(0,QUESTION_PER_QUIZ));
+
             Quiz quiz = new Quiz();
 
             quiz.setTitle(title);
-            quiz.setQuestionsList(questions);
+            quiz.setQuestionsList(selectedQuestions);
             Quiz createdQUiz = quizRepo.save(quiz);
 
             Integer quizId = createdQUiz.getId();
