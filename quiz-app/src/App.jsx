@@ -10,7 +10,11 @@ export default function App({ initialError = null }) {
   const [user, setUser] = useState(getStoredUser);
   const [stage, setStage] = useState(() => getStoredUser() ? 'checking' : 'login');
   const [error, setError] = useState(initialError);
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(
+      () => localStorage.getItem('theme') || 'light'
+  );
+
+  const [showThemeHint, setShowThemeHint] = useState(false);
   const [quiz, setQuiz] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [result, setResult] = useState(null);
@@ -26,6 +30,34 @@ export default function App({ initialError = null }) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+
+    // Only show after the user has successfully logged in
+    if (!user) {
+      return;
+    }
+
+    // Wait until login verification has completed
+    if (!['select', 'admin', 'denied'].includes(stage)) {
+      return;
+    }
+
+    // Don't show again if the user has already seen it
+    const themeHintSeen = localStorage.getItem('themeOnboardingSeen');
+
+    if (themeHintSeen === 'true') {
+      return;
+    }
+
+    // Small delay so it appears naturally after the dashboard loads
+    const timer = setTimeout(() => {
+      setShowThemeHint(true);
+    }, 800);
+
+    return () => clearTimeout(timer);
+
+  }, [user, stage]);
 
   useEffect(() => {
     const stored = getStoredUser();
@@ -83,10 +115,63 @@ export default function App({ initialError = null }) {
       setResult(response); setStage('result');
     } catch (err) { if (epoch === sessionEpoch.current) handleApiError(err); }
   }
+
+  function dismissThemeHint() {
+    localStorage.setItem('themeOnboardingSeen', 'true');
+    setShowThemeHint(false);
+  }
+
+  function handleThemeToggle() {
+    setTheme(currentTheme =>
+        currentTheme === 'light' ? 'dark' : 'light'
+    );
+
+    if (showThemeHint) {
+      dismissThemeHint();
+    }
+  }
   const canNavigate = ['select', 'result', 'admin', 'denied'].includes(stage);
   return <div className="app-container">
-    <button className="theme-toggle-button" onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}
-      aria-label="Toggle dark mode">{theme === 'light' ? '🌙' : '☀️'}</button>
+    <button
+        className={`theme-toggle-button ${
+            showThemeHint ? 'theme-toggle-highlight' : ''
+        }`}
+        onClick={handleThemeToggle}
+        aria-label={
+          theme === 'light'
+              ? 'Switch to dark mode'
+              : 'Switch to light mode'
+        }
+    >
+      {theme === 'light' ? '🌙' : '☀️'}
+    </button>
+
+    {showThemeHint && (
+        <div
+            className="theme-hint"
+            role="status"
+            aria-live="polite"
+        >
+          <div className="theme-hint-arrow">
+            ↑
+          </div>
+
+          <div className="theme-hint-title">
+            Switch Theme!
+          </div>
+
+          <div className="theme-hint-text">
+            Click here anytime to switch between light and dark mode.
+          </div>
+
+          <button
+              className="theme-hint-dismiss"
+              onClick={dismissThemeHint}
+          >
+            Got it
+          </button>
+        </div>
+    )}
     {user && stage !== 'login' && stage !== 'checking' && <header className={`app-header ${stage === 'admin' ? 'admin-header' : ''}`}>
       <span>Signed in as {user.name}{user.role === 'ADMIN' && <span className="admin-role">Admin</span>}</span>
       <div className="header-actions">
